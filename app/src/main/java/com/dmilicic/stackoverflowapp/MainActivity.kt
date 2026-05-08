@@ -10,8 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,7 +19,6 @@ import androidx.navigation.navArgument
 import com.dmilicic.stackoverflowapp.ui.navigation.Screen
 import com.dmilicic.stackoverflowapp.ui.screens.details.DetailsScreen
 import com.dmilicic.stackoverflowapp.ui.screens.list.ListScreen
-import com.dmilicic.stackoverflowapp.ui.screens.list.ListViewModel
 import com.dmilicic.stackoverflowapp.ui.theme.StackOverflowAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,7 +44,7 @@ fun NavigationStack() {
     NavHost(navController = navController, startDestination = Screen.List.route) {
         composable(route = Screen.List.route) {
             ListScreen(
-                viewModel = viewModel(),
+                viewModel = hiltViewModel(),
                 onClick = { id ->
                     navController.navigate(Screen.Detail.route + "?id=$id")
                 }

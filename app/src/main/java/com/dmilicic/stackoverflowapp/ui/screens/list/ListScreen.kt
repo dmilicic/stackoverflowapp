@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dmilicic.stackoverflowapp.models.BadgeCounts
 import com.dmilicic.stackoverflowapp.models.UserModel
 import com.dmilicic.stackoverflowapp.ui.theme.StackOverflowAppTheme
@@ -26,8 +27,8 @@ import com.dmilicic.stackoverflowapp.ui.theme.StackOverflowAppTheme
 fun ListScreen(
     viewModel: ListViewModel,
     onClick: (Int) -> Unit = {},
-    users: List<UserModel> = emptyList(),
 ) {
+    val users = viewModel.uiState.collectAsStateWithLifecycle().value.users
     ListContent(
         modifier = Modifier.fillMaxSize(),
         users = users,
