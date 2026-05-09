@@ -1,12 +1,17 @@
 package com.dmilicic.stackoverflowapp.ui.screens.list
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -16,9 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
+import com.dmilicic.stackoverflowapp.R
 import com.dmilicic.stackoverflowapp.models.BadgeCounts
 import com.dmilicic.stackoverflowapp.models.UserModel
 import com.dmilicic.stackoverflowapp.ui.theme.StackOverflowAppTheme
@@ -72,55 +84,78 @@ private fun UserRow(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
+            .padding(vertical = 8.dp)
             .clickable { onClickItem(user.userId) }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom,
+            .background(MaterialTheme.colorScheme.surfaceVariant),
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .clickable { onClickItem(user.userId) }
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = user.displayName ?: "Unknown user",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = "Reputation: ${user.reputation}",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            user.location?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            user.badgeCounts?.let {
-                Text(
-                    text = "Badges: ${it.gold} gold, ${it.silver} silver, ${it.bronze} bronze",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
 
-        Button(
-            modifier = Modifier.padding(top = 8.dp),
-            colors = if (isFollowing) {
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
+            AsyncImage(
+                modifier = Modifier
+                    .size(64.dp),
+                model = user.profileImage ?: android.R.drawable.sym_def_app_icon,
+                contentDescription = "User profile picture",
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 12.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = user.displayName ?: "Unknown user",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Button(
+                        modifier = Modifier.height(32.dp),
+                        colors = if (isFollowing) {
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                            )
+                        } else {
+                            ButtonDefaults.buttonColors()
+                        },
+                        onClick = { /* TODO: Implement follow functionality */ }
+                    ) {
+                        if (isFollowing) {
+                            Text(text = "Following", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                        } else {
+                            Text(text = "Follow")
+                        }
+                    }
+
+                }
+                Text(
+                    text = buildAnnotatedString {
+                        append("Reputation: ")
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                            append("${user.reputation}")
+                        }
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
                 )
-            } else {
-                ButtonDefaults.buttonColors()
-            },
-            onClick = { /* TODO: Implement follow functionality */ }
-        ) {
-            if (isFollowing) {
-                Text(text = "Following")
-            } else {
-                Text(text = "Follow")
+                user.location?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                user.badgeCounts?.let {
+                    Text(
+                        text = "Badges: ${it.gold} gold, ${it.silver} silver, ${it.bronze} bronze",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
         }
     }
