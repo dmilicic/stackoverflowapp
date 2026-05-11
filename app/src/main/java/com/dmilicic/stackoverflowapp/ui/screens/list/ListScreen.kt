@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.dmilicic.stackoverflowapp.R
 import com.dmilicic.stackoverflowapp.models.BadgeCounts
 import com.dmilicic.stackoverflowapp.models.UserModel
 import com.dmilicic.stackoverflowapp.ui.theme.StackOverflowAppTheme
@@ -40,11 +37,13 @@ fun ListScreen(
     viewModel: ListViewModel,
     onClick: (Int) -> Unit = {},
 ) {
-    val users = viewModel.uiState.collectAsStateWithLifecycle().value.users
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     ListContent(
         modifier = Modifier.fillMaxSize(),
-        users = users,
+        users = uiState.users,
+        followedUsers = uiState.followedUsers,
         onClickItem = onClick,
+        onClickFollow = viewModel::onClickFollow,
     )
 }
 
@@ -52,7 +51,9 @@ fun ListScreen(
 fun ListContent(
     modifier: Modifier = Modifier,
     users: List<UserModel> = emptyList(),
-    onClickItem: (Int) -> Unit = {}
+    followedUsers: List<Int> = emptyList(),
+    onClickItem: (Int) -> Unit = {},
+    onClickFollow: (Int) -> Unit = {},
 ) {
     if (users.isEmpty()) {
         Text(
@@ -71,7 +72,12 @@ fun ListContent(
             items = users,
             key = { it.userId },
         ) { user ->
-            UserRow(user = user, onClickItem = onClickItem, isFollowing = true)
+            UserRow(
+                user = user,
+                onClickItem = onClickItem,
+                isFollowing = followedUsers.contains(user.userId),
+                onClickFollow = { onClickFollow(user.userId) }
+            )
         }
     }
 }
@@ -81,6 +87,7 @@ private fun UserRow(
     user: UserModel,
     isFollowing: Boolean = false,
     onClickItem: (Int) -> Unit,
+    onClickFollow: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
@@ -116,7 +123,7 @@ private fun UserRow(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Button(
-                        modifier = Modifier.height(32.dp),
+                        modifier = Modifier.height(40.dp),
                         colors = if (isFollowing) {
                             ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
@@ -125,10 +132,10 @@ private fun UserRow(
                         } else {
                             ButtonDefaults.buttonColors()
                         },
-                        onClick = { /* TODO: Implement follow functionality */ }
+                        onClick = onClickFollow,
                     ) {
                         if (isFollowing) {
-                            Text(text = "Following", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                            Text(text = "Following")
                         } else {
                             Text(text = "Follow")
                         }
@@ -138,7 +145,12 @@ private fun UserRow(
                 Text(
                     text = buildAnnotatedString {
                         append("Reputation: ")
-                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
                             append("${user.reputation}")
                         }
                     },
@@ -183,7 +195,8 @@ private fun ListContentPreview() {
                     location = "London, UK",
                     badgeCounts = BadgeCounts(gold = 10, silver = 20, bronze = 30)
                 )
-            )
+            ),
+            followedUsers = listOf(1),
         )
     }
 }

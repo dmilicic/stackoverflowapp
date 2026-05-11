@@ -1,9 +1,12 @@
 package com.dmilicic.stackoverflowapp.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.dmilicic.stackoverflowapp.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -43,5 +46,10 @@ object ApiModule {
         retrofit: Retrofit
     ): ApiService {
         return retrofit.create(ApiService::class.java)
+    }
+
+    @Provides
+    fun provideSharedPrefs(@ApplicationContext appContext: Context): SharedPreferences {
+        return appContext.getSharedPreferences("stack_prefs", Context.MODE_PRIVATE)
     }
 }

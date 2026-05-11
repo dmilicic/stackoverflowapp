@@ -26,6 +26,27 @@ class ListViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true)
             val users = userRepository.getTopUsers()
             _uiState.value = _uiState.value.copy(users = users, isLoading = false)
+            loadFollowedUsers()
+        }
+    }
+
+    fun loadFollowedUsers() {
+        viewModelScope.launch {
+            val followedUserIds = userRepository.getFollowedUsers(_uiState.value.users)
+            _uiState.value = _uiState.value.copy(followedUsers = followedUserIds)
+        }
+    }
+
+    fun onClickFollow(userId: Int) {
+        viewModelScope.launch {
+            val isFollowing = userRepository.isUserFollowed(userId)
+            if (isFollowing) {
+                userRepository.unfollowUser(userId)
+            } else {
+                userRepository.followUser(userId)
+            }
+
+            loadFollowedUsers()
         }
     }
 }
