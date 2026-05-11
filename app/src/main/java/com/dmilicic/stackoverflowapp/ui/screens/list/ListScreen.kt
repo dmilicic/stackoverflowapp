@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -242,7 +243,7 @@ fun ListLoadingState(modifier: Modifier = Modifier) {
 @Composable
 fun EmptyContent(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -250,12 +251,12 @@ fun EmptyContent(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = "No users found!",
-                modifier = modifier.padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium.copy(
+                style = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
                 ),
             )
+            Spacer(modifier = Modifier.height(16.dp))
             Image(
                 modifier = Modifier
                     .size(64.dp)
