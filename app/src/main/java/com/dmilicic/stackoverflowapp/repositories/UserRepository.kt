@@ -1,6 +1,5 @@
 package com.dmilicic.stackoverflowapp.repositories
 
-import android.util.Log
 import com.dmilicic.stackoverflowapp.api.ApiService
 import com.dmilicic.stackoverflowapp.models.UserModel
 import com.dmilicic.stackoverflowapp.prefs.StackSharedPrefs

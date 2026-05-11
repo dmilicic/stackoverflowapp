@@ -10,10 +10,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Test
 
 
 class UserRepositoryTest {
@@ -72,6 +73,20 @@ class UserRepositoryTest {
     fun `unfollow a user`() = runTest {
         userRepository?.unfollowUser(1)
         verify { sharedPrefs.saveFollowedUser(1, false) }
+    }
+
+    @Test
+    fun `get followed users`() = runTest {
+        every { sharedPrefs.isFollowingUser(1) } returns true
+        every { sharedPrefs.isFollowingUser(2) } returns false
+
+        val userIds = userRepository?.getFollowedUsers(MOCK_USERS)
+        verify { sharedPrefs.isFollowingUser(1) }
+        verify { sharedPrefs.isFollowingUser(2) }
+        assertNotNull(userIds)
+        assertEquals(1, userIds?.size)
+        assertTrue(userIds?.contains(1) == true)
+        assertTrue(userIds?.contains(2) == false)
     }
 
     companion object {
