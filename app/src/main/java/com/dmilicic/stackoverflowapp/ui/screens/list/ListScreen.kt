@@ -43,7 +43,6 @@ import com.dmilicic.stackoverflowapp.ui.theme.StackOverflowAppTheme
 @Composable
 fun ListScreen(
     viewModel: ListViewModel,
-    onClick: (Int) -> Unit = {},
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     ListContent(
@@ -51,7 +50,6 @@ fun ListScreen(
         isLoading = uiState.isLoading,
         users = uiState.users,
         followedUsers = uiState.followedUsers,
-        onClickItem = onClick,
         onClickFollow = viewModel::onClickFollow,
     )
 }
@@ -62,7 +60,6 @@ fun ListContent(
     isLoading: Boolean = false,
     users: List<UserModel> = emptyList(),
     followedUsers: List<Int> = emptyList(),
-    onClickItem: (Int) -> Unit = {},
     onClickFollow: (Int) -> Unit = {},
 ) {
     if (isLoading) {
@@ -85,7 +82,6 @@ fun ListContent(
         ) { user ->
             UserRow(
                 user = user,
-                onClickItem = onClickItem,
                 isFollowing = followedUsers.contains(user.userId),
                 onClickFollow = { onClickFollow(user.userId) }
             )
@@ -97,14 +93,12 @@ fun ListContent(
 private fun UserRow(
     user: UserModel,
     isFollowing: Boolean = false,
-    onClickItem: (Int) -> Unit,
     onClickFollow: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
             .fillMaxSize()
             .clip(MaterialTheme.shapes.medium)
-            .clickable { onClickItem(user.userId) }
             .background(MaterialTheme.colorScheme.surfaceVariant),
     ) {
         Row(
