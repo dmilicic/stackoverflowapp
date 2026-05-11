@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import javax.inject.Inject
 import androidx.core.content.edit
 
-class StackSharedPrefs @Inject constructor(val sharedPreferences: SharedPreferences) {
+class StackSharedPrefs @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
     fun saveFollowedUser(userId: Int, isFollowing: Boolean) {
         sharedPreferences.edit { putBoolean(userId.toString(), isFollowing) }
