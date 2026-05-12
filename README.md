@@ -10,6 +10,8 @@ This is a sample app to demonstrate the standardized architecture used across An
 - If the server is unavailable, the app will display an empty error state
 - The repository code is covered by unit tests that test all paths of the code, including error handling and edge cases
 
+Here's a [Video](./example/stackoverflowapp.webm)
+
 # Architecture
 
 Flow of data looks like this:
